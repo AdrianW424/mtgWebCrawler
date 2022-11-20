@@ -20,37 +20,22 @@ class MTGCrawler():
     Returns:
         bool: if the page numbers are the same -> False (not end of Pages). If page numbers are not the same -> True
     """
-        return int(BeautifulSoup(html, 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0]) != page
+        return int(BeautifulSoup(html, 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0]) < page
 
-    def __deleteRedundantPages(self, res, div):
+    def __deleteRedundantPages(self, res, page):
         # TODO: improve work -> better use inbuild search function
         """delete all pages from the end, that are redundant
 
         Args:
             res (list of string): list that contains all pages
-            div (int): amount of pages per iteration
 
         Returns:
             list of string: list that contains all pages (now without redundant pages at the end)
         """
-        if div == 1:
-            res = res[:-1]
-        else:
-            buf = res[-div:]
-            res = res[:-div]
-            
-            parse_buffer1 = int(BeautifulSoup(buf[-1], 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0])
-            for i in reversed(range(1, div)):
-                parse_buffer2 = int(BeautifulSoup(buf[i-1], 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0])
-                if parse_buffer1 == parse_buffer2:
-                    buf.pop()
-                    if i == 1 and len(res) > 0:
-                        if int(BeautifulSoup(buf[i-1], 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0]) == int(BeautifulSoup(res[-1], 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0]):
-                            buf.pop()
-                else:
-                    break
-                parse_buffer1 = parse_buffer2
-            res += buf
+        parse_page = int(BeautifulSoup(res[-1], 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0])
+        
+        if page > int(parse_page):
+            res = res[:int(parse_page)-page]
         return res
 
     async def __fetch(self, s, url):
@@ -71,7 +56,7 @@ class MTGCrawler():
                 res = await asyncio.gather(*tasks)
                 print(str(i*div) + "..." + str((i+1)*div-1))
                 if self.__checkForEndOfPages(res[-1], (i + 1)*div):
-                    res = self.__deleteRedundantPages(res, div)
+                    res = self.__deleteRedundantPages(res, (i + 1)*div)
                     break  
             if pageNum < len(res):
                 res = res[:pageNum]
@@ -84,7 +69,7 @@ class MTGCrawler():
                 res = await asyncio.gather(*tasks)
                 print(str(i*div) + "..." + str((i+1)*div-1))
                 if self.__checkForEndOfPages(res[-1], (i + 1)*div):
-                    res = self.__deleteRedundantPages(res, div)
+                    res = self.__deleteRedundantPages(res, (i + 1)*div)
                     break
                 i += 1
         return res
