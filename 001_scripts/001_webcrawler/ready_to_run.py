@@ -13,26 +13,9 @@ class MTGCrawler():
         disable_warnings(InsecureRequestWarning)
         
     def __checkForEndOfPages(self, html, page):
-        """checks if the underlined pagenumber in the @html string is equivilant to the number given as @page
-
-    Args:
-        html (str): html-string containing one page
-        page (int): page number
-
-    Returns:
-        bool: if the page numbers are the same -> False (not end of Pages). If page numbers are not the same -> True
-    """
         return int(BeautifulSoup(html, 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0]) < page
 
     def __deleteRedundantPages(self, res, page):
-        """delete all pages from the end, that are redundant
-
-        Args:
-            res (list of string): list that contains all pages
-
-        Returns:
-            list of string: list that contains all pages (now without redundant pages at the end)
-        """
         parse_page = int(BeautifulSoup(res[-1], 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0])
         
         if page > int(parse_page):
@@ -76,9 +59,6 @@ class MTGCrawler():
         return res
 
     async def main(self, pageNum = 0, div = 20, offset = 0):
-        #div = 20        # integer
-        #offset = 200      # integer - sollte Vielfaches von div sein - bei div = 10 -> offset = 10 oder = 20 oder ... oder = 250
-                        # wird als offset = 241 gewählt, so wird intern daraus 240 gemacht, genauso bei offset = 242 oder ... oder 249 ... usw.
         if div < 1:
             print("Div muss >= 1")
         else:
