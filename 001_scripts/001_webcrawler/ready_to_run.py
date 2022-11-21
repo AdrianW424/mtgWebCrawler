@@ -143,15 +143,13 @@ if __name__ == "__main__":
     asyncio.set_event_loop(loop)
     
     # run async function to fetch all html-pages with data on them
-    htmls = loop.run_until_complete(crawler.main(div=40, offset=0))
+    htmls = loop.run_until_complete(crawler.main(div=40))
     
     csv.defineCols("ID", "Image-ID", "Name", "Type")
     i = 0
     for html in htmls:
-        print(i)
         results = BeautifulSoup(html, 'html.parser')
         cards = results.find_all('tr', class_=['cardItem evenItem', 'cardItem oddItem'])
-        #print(i)
         for card in cards:
             img, id = extractor.getImageAndID(card)
             csv.addCard(("int", id), ("str", img), ("str", extractor.getName(card)), ("str", extractor.getType(card)))
