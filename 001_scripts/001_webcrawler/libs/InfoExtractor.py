@@ -1,3 +1,9 @@
+"""
+author: Adrian Waldera
+date: 21.11.2022
+license: free
+"""
+
 import re
 
 class InfoExtractor():

@@ -1,3 +1,9 @@
+"""
+author: Adrian Waldera
+date: 21.11.2022
+license: free
+"""
+
 from urllib3.exceptions import InsecureRequestWarning
 from urllib3 import disable_warnings
 from bs4 import BeautifulSoup
@@ -6,25 +12,30 @@ import asyncio
 import aiohttp
 
 class MTGCrawler():
+    """ Contains all functionality and data for crawling MTG cards
+    """
     
     def __init__(self):
+        """ Constructor of @MTGCrawler
+            Disables insecure warnings
+        """
         disable_warnings(InsecureRequestWarning)
         
     def __checkForEndOfPages(self, html, page):
-        """checks if the underlined pagenumber in the @html string is equivilant to the number given as @page
+        """ Checks if the underlined pagenumber in the @html string is equivilant to the number given as @page
 
-    Args:
-        html (str): html-string containing one page
-        page (int): page number
+        Args:
+            html (str): string containing the html code of one page
+            page (int): page number
 
-    Returns:
-        bool: if the page numbers are the same -> False (not end of Pages). If page numbers are not the same -> True
-    """
+        Returns:
+            bool: if the page numbers are the same -> False (not end of Pages). If page numbers are not the same -> True
+        """
         return int(BeautifulSoup(html, 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0]) < page
 
     def __deleteRedundantPages(self, res, page):
         # TODO: improve work -> better use inbuild search function
-        """delete all pages from the end, that are redundant
+        """ Delete all pages from the end, that are redundant
 
         Args:
             res (list of string): list that contains all pages
@@ -39,12 +50,32 @@ class MTGCrawler():
         return res
 
     async def __fetch(self, s, url):
+        """ Fetches the html code of the given URL
+
+        Args:
+            s (asyncio.session): Session to be used
+            url (str): URL to fetch html code from
+
+        Returns:
+            str: html code of the page
+        """
         async with s.get(f'https://gatherer.wizards.com/Pages/Search/Default.aspx?sort=cn+&page={url}&name=%20[]') as r:
             if r.status != 200:
                 r.raise_for_status()
             return await r.text()
 
     async def __fetch_all(self, s, pageNum, offset, div):
+        """ Fetches the html code of multiple pages 
+
+        Args:
+            s (_type_): _description_
+            pageNum (_type_): _description_
+            offset (_type_): _description_
+            div (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         tasks = []
         res = []
         end = math.ceil(pageNum/div)

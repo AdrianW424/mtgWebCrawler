@@ -12,3 +12,5 @@ Provides scripts for web crawling and processing of MTG trading cards and their 
     * Daten mit sqoop in mysql exportieren              ==> not yet
 * MySQL-Datenbank aufsetzen                             ==> not yet
 * Frontend in Flask schreiben                           ==> PARTIALLY
+
+- maybe change pageNum to len(htmls)

@@ -6,6 +6,7 @@ import asyncio
 import aiohttp
 import re
 import io
+import datetime
 
 class MTGCrawler():
     
@@ -136,7 +137,9 @@ if __name__ == "__main__":
         i += 1
         
     str = csv.getCsv()
+    
+    date = datetime.datetime.now()
 
-    with io.open('Lukas.csv', 'w', encoding='utf8') as f:
+    with io.open('cards.basics_' + str(date)[:10] + '.csv', 'w', encoding='utf8') as f:
         f.write(str)
         f.close()
