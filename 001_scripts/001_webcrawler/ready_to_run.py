@@ -63,7 +63,7 @@ class MTGCrawler():
         if div < 1:
             print("Div muss >= 1")
         else:
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
                 htmls = await self.__fetch_all(session, pageNum, offset, div)
                 return htmls
 
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     asyncio.set_event_loop(loop)
     
     # run async function to fetch all html-pages with data on them
-    htmls = loop.run_until_complete(crawler.main(div=40))
+    htmls = loop.run_until_complete(crawler.main(div=40, offset=200))
     
     csv.defineCols("ID", "Image-ID", "Name", "Type")
     i = 0
@@ -136,10 +136,10 @@ if __name__ == "__main__":
             csv.addCard(("int", id), ("str", img), ("str", extractor.getName(card)), ("str", extractor.getType(card)))
         i += 1
         
-    str = csv.getCsv()
+    csvData = csv.getCsv()
     
     date = datetime.datetime.now()
 
     with io.open('cards.basics_' + str(date)[:10] + '.csv', 'w', encoding='utf8') as f:
-        f.write(str)
+        f.write(csvData)
         f.close()
