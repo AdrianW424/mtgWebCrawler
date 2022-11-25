@@ -134,3 +134,10 @@ class HiveToMySQL():
         return self.requestMySQL(cursorMySQL, stmtMySQL, data, True)
         
     
+if __name__ == "__main__":
+    # program jump-in
+    htm = HiveToMySQL("hadoop", 10000, "hadoop", "mysql", 3306, "root", "mysql")
+    hiveCursor = htm.createHiveCursor()
+    mysqlCursor = htm.createMySQLCursor()
+
+    _ = htm.exchangeHiveToMySQL(hiveCursor, mysqlCursor, "SELECT id, image_id, name, type FROM default.cards_basics", "INSERT INTO mtg.cards_basics (id, image_id, name, type) VALUES (%s, %s, %s, %s)")
