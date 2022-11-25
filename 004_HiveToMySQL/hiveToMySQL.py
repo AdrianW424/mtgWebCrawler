@@ -1,52 +1,110 @@
-"""_summary_
-
-Returns:
-    _type_: _description_
+"""
+author: Adrian Waldera
+date: 25.11.2022
+license: free
 """
 
 from pyhive import hive
 import mysql.connector
     
 class HiveToMySQL():
+    """class that contains functions and data for a data export from hive to mysql
+    """
     hiveConn = None
     mysqlConn = None
     
-    def __init__(self, hiveHost=None, hivePort=10000, hiveUser="hadoop", mysqlHost=None, mysqlPort=3306, mysqlUser="root", mysqlPassword=""):
+    def __init__(self, hiveHost : str = None, hivePort : int = 10000, hiveUser : str = "hadoop", mysqlHost : str = None, mysqlPort : int = 3306, mysqlUser : str = "root", mysqlPassword : str = ""):
+        """constructor, that is able to create connections to hive and mysql if desired
+
+        Args:
+            hiveHost (str, optional): Hive hostname or host-ip. Defaults to None.
+            hivePort (int, optional): Hive port. Defaults to 10000.
+            hiveUser (str, optional): Hive username. Defaults to "hadoop".
+            mysqlHost (str, optional): MySQL hostname or host-ip. Defaults to None.
+            mysqlPort (int, optional): MySQL port. Defaults to 3306.
+            mysqlUser (str, optional): MySQL username. Defaults to "root".
+            mysqlPassword (str, optional): MySQL password. Defaults to "".
+        """
         if(hiveHost != None):
             self.createHiveConection(hiveHost, hivePort, hiveUser)
         if(mysqlHost != None):
             self.createMySQLConnection(mysqlHost, mysqlPort, mysqlUser, mysqlPassword)
     
-    def createHiveConection(self, host, port, username):
+    def createHiveConection(self, host : str = None, port : int = 10000, user : str = "hadoop"):
+        """create a connection to a Hive-server
+
+        Args:
+            host (str, optional): Hive hostname or host-ip. Defaults to None.
+            port (int, optional): Hive port. Defaults to 10000.
+            username (str, optional): Hive username. Defaults to "hadoop".
+        """
         self.hiveConn = hive.Connection(
             host=host, 
             port=port, 
-            username=username
+            username=user
         )
         
     def createHiveCursor(self):
+        """create a cursor for Hive to access it
+
+        Returns:
+            hive.Cursor: Hive cursor
+        """
         if self.hiveConn != None:
             return self.hiveConn.cursor()
     
-    def requestHive(self, cursor, stmt):
+    def requestHive(self, cursor : hive.Cursor, stmt : str):
+        """send a request to hive (and get the answer, if not an updating statement)
+
+        Args:
+            cursor (hive.Cursor): cursor to use to execute the statement
+            stmt (str): statement to be executed
+
+        Returns:
+            list | None: list of rows or None
+        """
         if cursor != None:   
             cursor.execute(stmt)
             return cursor.fetchall()
         return None
     
-    def createMySQLConnection(self, host, port, username, password=""):
+    def createMySQLConnection(self, host : str = None, port : int = 3306, user : str = "root", password : str = ""):
+        """create a connection to a MySQL-server
+
+        Args:
+            host (str, optional): MySQL hostname or host-ip. Defaults to None.
+            port (int, optional): MySQL port. Defaults to 3306.
+            user (str, optional): MySQL username. Defaults to "root".
+            password (str, optional): MySQL password. Defaults to "".
+        """
         self.mysqlConn = mysql.connector.connect(
             host=host,
             port=port,
-            user=username,
+            user=user,
             password=password
         )
         
     def createMySQLCursor(self):
+        """create a cursor for MySQL to access it
+
+        Returns:
+            CMySQLCursor: MySQL cursor
+        """
         if self.mysqlConn != None:
             return self.mysqlConn.cursor()
 
-    def requestMySQL(self, cursor, stmt, many=None, update=False):
+    def requestMySQL(self, cursor : CMySQLCursor, stmt : str, many : list | tuple = None, update : bool = False):
+        """send a request to hive (and get the answer, if not an updating statement)
+
+        Args:
+            cursor (CMySQLCursor): cursor to use to execute the statement
+            stmt (str): statement to be executed
+            many (list | tuple, optional): list of data, that can be added to the query. If @many is not None, then cursor.executemany() will be used instead of cursor.execute(). Defaults to None.
+            update (bool, optional): specifies if an updating statement is being used. Defaults to False.
+
+        Returns:
+            list | tuple | None: _description_
+        """
         if cursor != None:
             if many != None:
                 cursor.executemany(stmt, many)
@@ -58,16 +116,16 @@ class HiveToMySQL():
                 return cursor.fetchall()
         return None
     
-    def exchangeHiveToMySQL(self, cursorHive, cursorMySQL, stmtHive, stmtMySQL):
+    def exchangeHiveToMySQL(self, cursorHive : hive.Cursor, cursorMySQL : CMySQLCursor, stmtHive : str, stmtMySQL : str):
         """ transmits data from hive to mysql
         Note, that the statement for Hive should be "SELECT" or something similar.
         Note, that the statement for MySQL should be "INSERT" or something similar.
 
         Args:
-            cursorHive (): Cursor for Hive
-            cursorMySQL (): Cursor for MySQL
-            stmtHive (): Statement to be executed in Hive (should be something fetching)
-            stmtMySQL (): Statement to be executed in MySQL (should be something inserting)
+            cursorHive (hive.Cursor): Cursor for Hive
+            cursorMySQL (CMySQLCursor): Cursor for MySQL
+            stmtHive (str): Statement to be executed in Hive (should be something fetching)
+            stmtMySQL (str): Statement to be executed in MySQL (should be something inserting)
 
         Returns:
             tuple | str: Output of the MySQL-Query
