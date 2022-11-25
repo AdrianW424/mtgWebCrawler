@@ -5,12 +5,12 @@ Provides scripts for web crawling and processing of MTG trading cards and their 
 * Unendlichkeitssymbol entfernen                        ==> DONE
 * Airflow DAG machen:
     * Ordner erstellen mtg                              ==> DONE
-    * Daten mit crawler lesen und als csv speichern     ==> in progress
-    * Daten in HDFS speichern                           ==> not yet
-    * Daten in Hive überbringen                         ==> not yet
-    * Daten partitionieren                              ==> not yet
-    * Daten mit sqoop in mysql exportieren              ==> not yet
-* MySQL-Datenbank aufsetzen                             ==> not yet
+    * Daten mit crawler lesen und als csv speichern     ==> DONE
+    * Daten in HDFS speichern                           ==> DONE
+    * Daten in Hive überbringen                         ==> DONE
+    * Daten partitionieren                              ==> DONE
+    * Daten mit Python von Hive zu MySQL                ==> in progress
+* MySQL-Datenbank aufsetzen                             ==> DONE
 * Frontend in Flask schreiben                           ==> PARTIALLY
 
 - maybe change pageNum to len(htmls)
