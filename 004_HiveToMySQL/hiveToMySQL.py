@@ -13,7 +13,7 @@ class HiveToMySQL():
     hiveConn = None
     mysqlConn = None
     
-    def __init__(self, hiveHost : str = None, hivePort : int = 10000, hiveUser : str = "hadoop", mysqlHost : str = None, mysqlPort : int = 3306, mysqlUser : str = "root", mysqlPassword : str = ""):
+    def __init__(self, hiveHost = None, hivePort = 10000, hiveUser = "hadoop", mysqlHost = None, mysqlPort = 3306, mysqlUser = "root", mysqlPassword = ""):
         """constructor, that is able to create connections to hive and mysql if desired
 
         Args:
@@ -30,7 +30,7 @@ class HiveToMySQL():
         if(mysqlHost != None):
             self.createMySQLConnection(mysqlHost, mysqlPort, mysqlUser, mysqlPassword)
     
-    def createHiveConection(self, host : str = None, port : int = 10000, user : str = "hadoop"):
+    def createHiveConection(self, host = None, port = 10000, user = "hadoop"):
         """create a connection to a Hive-server
 
         Args:
@@ -53,7 +53,7 @@ class HiveToMySQL():
         if self.hiveConn != None:
             return self.hiveConn.cursor()
     
-    def requestHive(self, cursor : hive.Cursor, stmt : str):
+    def requestHive(self, cursor, stmt):
         """send a request to hive (and get the answer, if not an updating statement)
 
         Args:
@@ -68,7 +68,7 @@ class HiveToMySQL():
             return cursor.fetchall()
         return None
     
-    def createMySQLConnection(self, host : str = None, port : int = 3306, user : str = "root", password : str = ""):
+    def createMySQLConnection(self, host = None, port = 3306, user = "root", password = ""):
         """create a connection to a MySQL-server
 
         Args:
@@ -93,7 +93,7 @@ class HiveToMySQL():
         if self.mysqlConn != None:
             return self.mysqlConn.cursor()
 
-    def requestMySQL(self, cursor : CMySQLCursor, stmt : str, many : list | tuple = None, update : bool = False):
+    def requestMySQL(self, cursor, stmt, many = None, update = False):
         """send a request to hive (and get the answer, if not an updating statement)
 
         Args:
@@ -116,7 +116,7 @@ class HiveToMySQL():
                 return cursor.fetchall()
         return None
     
-    def exchangeHiveToMySQL(self, cursorHive : hive.Cursor, cursorMySQL : CMySQLCursor, stmtHive : str, stmtMySQL : str):
+    def exchangeHiveToMySQL(self, cursorHive, cursorMySQL, stmtHive, stmtMySQL):
         """ transmits data from hive to mysql
         Note, that the statement for Hive should be "SELECT" or something similar.
         Note, that the statement for MySQL should be "INSERT" or something similar.
