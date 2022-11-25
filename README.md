@@ -9,8 +9,8 @@ Provides scripts for web crawling and processing of MTG trading cards and their 
     * Daten in HDFS speichern                           ==> DONE
     * Daten in Hive überbringen                         ==> DONE
     * Daten partitionieren                              ==> DONE
-    * Daten mit Python von Hive zu MySQL                ==> in progress
+    * Daten mit Python von Hive zu MySQL                ==> DONE
 * MySQL-Datenbank aufsetzen                             ==> DONE
-* Frontend in Flask schreiben                           ==> PARTIALLY
+* Frontend in Flask schreiben                           ==> in progress...
 
 - maybe change pageNum to len(htmls)
