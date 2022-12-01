@@ -16,6 +16,16 @@ import sys
 
 class MTGCrawler():
     """ Contains all functionality and data for crawling MTG cards
+    
+        General:
+          This version is currently only to fetch and save the English cards of Magic: The Gathering.
+        
+          Cards are being crawled from URL "https://gatherer.wizards.com/Pages/Search/Default.aspx?sort=cn+&page={number}&name=%20[]", not from
+          "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid={number}". The link used contains a collection of 100 cards each.
+          The end can be determined thereby more simply, since connected numbers are used as page number.
+          If the second link would be used, there could possibly be duplicates in the cards, since numerous cards are also available several times.
+          Furthermore, the determination of the crawl end would be very difficult, since no contiguous numbers are used as multiverse ID. 
+          Without great effort, it would not be possible to determine the end, since it may be in the millions and the crawl would take a very long time.
     """
 
     def __init__(self):
