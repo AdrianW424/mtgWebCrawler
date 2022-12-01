@@ -15,7 +15,6 @@ from airflow.operators.hdfs_operations import HdfsPutFileOperator, HdfsMkdirFile
 from airflow.operators.hive_operator import HiveOperator
 from airflow.operators.mysql_operator import MySqlOperator
 from airflow.operators.python_operator import PythonOperator
-from airflow.providers.apache.hive.transfers.hive_to_mysql import HiveToMySqlOperator
 
 args = {
     'owner': 'airflow'
@@ -57,12 +56,6 @@ CREATE TABLE mtg.cards_basics (
 );
 """
 
-hive_fetch_all_cards_basics="""
-SELECT id, image_id, name, type
-FROM cards_basics
-WHERE partition_year={{ macros.ds_format(ds, "%Y-%m-%d", "%Y")}}, partition_month={{ macros.ds_format(ds, "%Y-%m-%d", "%m")}}, partition_day={{ macros.ds_format(ds, "%Y-%m-%d", "%d")}};
-"""
-
 dag = DAG('MTGCrawler', default_args=args, description='Crawl MTG Cards',
           schedule_interval='56 18 * * *',
           start_date=datetime(2019, 10, 16), catchup=False, max_active_runs=1)
@@ -74,18 +67,18 @@ dag = DAG('MTGCrawler', default_args=args, description='Crawl MTG Cards',
 #    dag=dag,
 #)
 
-#clear_local_import_dir = ClearDirectoryOperator(
-#    task_id='clear_import_dir',
-#    directory='/home/airflow/mtg',
-#    pattern='*',
-#    dag=dag,
-#)
+clear_local_import_dir = ClearDirectoryOperator(
+    task_id='clear_import_dir',
+    directory='/home/airflow/mtg',
+    pattern='*',
+    dag=dag,
+)
 
-#run_python_crawler = BashOperator(
-#    task_id='run_python_crawler',
-#    bash_command='python3.9 /home/airflow/airflow/dags/crawler.py',
-#    dag=dag,
-#)
+run_python_crawler = BashOperator(
+    task_id='run_python_crawler',
+    bash_command='python3.9 /home/airflow/airflow/dags/crawler.py',
+    dag=dag,
+)
 
 #create_hdfs_mtg_cards_basics_partition_dir = HdfsMkdirFileOperator(
 #    task_id='mkdir_hdfs_mtg_cards_basics_dir',

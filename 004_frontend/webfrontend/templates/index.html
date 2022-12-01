@@ -1,0 +1,48 @@
+<!-- search bar  -->
+<link rel="stylesheet" href="{{ url_for('static',filename='styles/style001.css') }}">
+<form method="post">
+  <center>
+    <h1 class="title" style="padding-top:20px; padding-bottom: 20px; font-family: sans-serif; font-size: 30px;"> MTG Card-Database </h1>
+    <div>
+    {% if data[0] != -1 %}
+    <input style="font-size: 24px; width: 50%; max-width: 600px;" type="text" name="search" value="{{ word }}">
+    {% else %}
+    <input style="font-size: 24px; width: 50%; max-width: 600px;" type="text" name="search">
+    {% endif %}
+    <input style="font-size: 24px;" type="submit" value="Search">
+    </div>
+  </center>
+</form>
+
+  <!-- output the results -->
+  {% if data | length != 0 %}
+    {% if data[0] != -1 %}
+    <center>
+    <h1 style="margin-top: 20px; font-size: 1.2em; font-family: sans-serif;"> You have {{ length }} search result/s </h1>
+    <table id="demo" class="styled-table">
+          <thead>
+                <tr>
+                        <td>Image</td>
+                        <td>Multiverse-ID</td>
+                        <td>Name</td>
+                        <td>Type</td>
+                </tr>
+          </thead>
+      {% for d in data %}
+          <tbody>
+                <tr>
+                        <td><img src={{ d[1] }} style="height:310px; width:223px;"></td>
+                        <td>{{ d[0] }}</td>
+                        <td>{{ d[2] }}</td>
+                        <td>{{ d[3] }}</td>
+                </tr>
+          </tbody>
+      {% endfor %}
+    </table>
+    </center>
+    {% endif %}
+  {% else %}
+    {% if data[0] != -1 %}
+    <center style="margin-top: 20px; font-size: 1.2em; font-family: sans-serif; font-weight: bold;" id="demo">No search results. Try again.</center>
+    {% endif %}
+  {% endif %}

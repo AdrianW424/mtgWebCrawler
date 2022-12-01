@@ -34,7 +34,6 @@ class MTGCrawler():
         return int(BeautifulSoup(html, 'html.parser').find('div', class_='simpleRoundedBoxTitleGreyTall').find('div', class_='pagingcontrols').find('a', style='text-decoration:underline;').contents[0]) < page
 
     def __deleteRedundantPages(self, res, page):
-        # TODO: improve work -> better use inbuild search function
         """ Delete all pages from the end, that are redundant
 
         Args:
