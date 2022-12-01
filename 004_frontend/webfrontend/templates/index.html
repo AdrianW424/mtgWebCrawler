@@ -16,7 +16,7 @@
 
   <!-- output the results -->
   {% if data | length != 0 %}
-    {% if data[0] != -1 %}
+    {% if data[0] != -1 and data[0] != -2%}
     <center>
     <h1 style="margin-top: 20px; font-size: 1.2em; font-family: sans-serif;"> You have {{ length }} search result/s </h1>
     <table id="demo" class="styled-table">
@@ -40,9 +40,13 @@
       {% endfor %}
     </table>
     </center>
+    {% else %}
+      {% if data[0] == -2 %}
+        <center style="margin-top: 20px; font-size: 1.2em; font-family: sans-serif; font-weight: bold;" id="demo">Unfortunately the database is not available. Try again.</center>
+      {% endif %}
     {% endif %}
   {% else %}
     {% if data[0] != -1 %}
-    <center style="margin-top: 20px; font-size: 1.2em; font-family: sans-serif; font-weight: bold;" id="demo">No search results. Try again.</center>
+      <center style="margin-top: 20px; font-size: 1.2em; font-family: sans-serif; font-weight: bold;" id="demo">No search results. Try again.</center>
     {% endif %}
   {% endif %}

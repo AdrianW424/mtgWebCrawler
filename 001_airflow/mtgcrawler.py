@@ -116,27 +116,27 @@ addPartition_HiveTable_cards_basics = HiveOperator(
 
 mySQL_create_mtg_database = MySqlOperator(
     sql=mySQL_create_database,
-    task_id="SqlCreateDatabase",
+    task_id="sql_create_database",
     mysql_conn_id="mysql",
     dag=dag,
 )
 
 mySQL_drop_mtg_cards_basics = MySqlOperator(
     sql=mySQL_drop_table_cards_basics,
-    task_id="SqlQueryDropMTGCardsBasics",
+    task_id="sql_query_drop_mtg_cards_basics",
     mysql_conn_id="mysql",
     dag=dag,
 )
 
 mySQL_create_mtg_cards_basics = MySqlOperator(
     sql=mySQL_create_table_cards_basics,
-    task_id="SqlQueryCreateMTGCardsBasics",
+    task_id="sql_query_create_mtg_cards_basics",
     mysql_conn_id="mysql",
     dag=dag,
 )
 
 transfer_Hive_to_MySQL = PythonOperator(
-    task_id='HiveToMySQL',
+    task_id='hive_to_mysql',
     python_callable=HiveMySQLLink.main,
     op_args=["{{ ds }}"],
     dag=dag,

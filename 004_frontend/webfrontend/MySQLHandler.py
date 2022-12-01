@@ -10,17 +10,14 @@ class MySQLHandler():
     """class that contains usefull functionalities when dealing with MySQL
     """
     
-    def createMySQLConnNCursor(self, host, port, user, password):
-        """create a connection to a MySQL-system and a cursor 
+    def createMySQLConnection(self, host, port, user, password):
+        """create a connection to a MySQL-system
 
         Args:
             host (str): hostname or host-ip of the network
             port (int): port that MySQL uses
             user (str): user to use, to access MySQL
             password (str): password of the user
-
-        Returns:
-            CMySQLCursor: MySQL cursor
         """
         self.mysqlConn = mysql.connector.connect(
             host=host,
@@ -28,8 +25,46 @@ class MySQLHandler():
             user=user,
             password=password
         )
+    
+    def createMySQLCursor(self):
+        """create a cursor to a MySQL-system
+
+        Returns:
+            CMySQLCursor | bool: MySQL cursor
+        """
+        if not self.checkForConnection(None, None, True):
+            return False
+        
         self.mysqlCursor = self.mysqlConn.cursor()
         return self.mysqlCursor
+    
+    def checkForConnection(self, database, table, onlyConn=False):
+        """check if a connection to the MySQL server can be established. Can also check for existence of database and table
+
+        Args:
+            database (str): database to look for
+            table (str): table to look for
+            onlyConn (bool, optional): If True, then only the connection will be checked, not the database and table. Defaults to False.
+
+        Returns:
+            bool: if connection is successfull or not
+        """
+        if not self.mysqlConn.is_connected():  # check for connection to mysql
+            return False
+        if onlyConn:
+            return True
+        
+        self.mysqlCursor.execute(f"SHOW DATABASES LIKE \'{database}\'")
+        res = self.mysqlCursor.fetchall()
+        if len(res) == 0 or not (database in res[0]):  # check if database exists
+            return False
+
+        self.mysqlCursor.execute(f"SHOW TABLES FROM {database} LIKE \'{table}\'")
+        res = self.mysqlCursor.fetchall()
+        if len(res) == 0 or not (table in res[0]):  # check if database exists
+            return False
+
+        return True
 
     def requestData(self, cursor, stmt=""):
         """fetch data from the MySQL connection
