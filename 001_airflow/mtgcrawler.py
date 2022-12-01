@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Title: MTGCrawler Dag
+Title: MTGCrawler DAG
 Author: Adrian Waldera
 Description: DAG for the MTG crawler project
 """

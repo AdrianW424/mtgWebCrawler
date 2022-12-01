@@ -15,9 +15,11 @@ mysqlh = msh.MySQLHandler() # object, that helps regarding mysql
 def index():
   # search for data in database
   if request.method == "POST":
+    mysqlh.createMySQLConnNCursor("mysql", 3306, "root", "mysql") # using Host mysql, Port: 3306, User: root, Password: mysql
     data = dict(request.form)
-    stmt = mysqlh.stmtHelper("mtg.cards_basics", ["id", data["search"]], ["name", data["search"]], ["type", data["search"]])  # create statement to query the database
+    stmt = mysqlh.stmtHelper("mtg.cards_basics", [["id", data["search"]], ["name", data["search"]], ["type", data["search"]]], ["id", "ASC"])  # create statement to query the database
     results = mysqlh.requestData(mysqlh.mysqlCursor, stmt)
+    mysqlh.closeConnection() # close the connection again, otherwise it would not be possible to edit databases or tables
   else:
     results = [-1]
     data = {"search": -1} # -1 means, that no data has been requestet yet (e.g. when reloading page)
@@ -27,5 +29,4 @@ def index():
 
 # program jump-in
 if __name__ == "__main__":
-    mysqlh.createMySQLConnNCursor("mysql", 3306, "root", "mysql") # using Host mysql, Port: 3306, User: root, Password: mysql
     app.run(host="0.0.0.0", port=5000) # starting webserver at external-ip, port: 5000
